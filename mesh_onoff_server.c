@@ -310,7 +310,7 @@ void mesh_app_init(wiced_bool_t is_provisioned)
     wiced_bt_mesh_model_onoff_server_init(MESH_ONOFF_SERVER_ELEMENT_INDEX, mesh_onoff_server_message_handler, TRANSITION_INTERVAL, is_provisioned);
 
 #ifdef MESH_DFU_SUPPORTED
-    wiced_bt_mesh_model_fw_update_server_init("https://mesh.example.com/check-for-updates");
+    wiced_bt_mesh_model_fw_update_server_init();
     wiced_bt_mesh_model_fw_distribution_server_init();
     wiced_bt_mesh_model_blob_transfer_server_init(WICED_BT_MESH_FW_TRANSFER_MODE_PUSH);
 #endif
