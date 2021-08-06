@@ -39,6 +39,8 @@ endif
 # Basic Configuration
 #
 APPNAME=BLE_Mesh_OnOffServer
+APP_VERSION_MAJOR = 1
+APP_VERSION_MINOR = 0
 TOOLCHAIN=GCC_ARM
 CONFIG=Debug
 VERBOSE=
@@ -70,6 +72,8 @@ SUPPORTED_TARGETS = \
   CYBT-343052-EVAL \
   CYW920735Q60EVB-01 \
   CYW920835M2EVB-01 \
+  CYBLE-343072-EVAL-M2B \
+  CYBLE-333074-EVAL-M2B \
   CYW920721M2EVK-01 \
   CYW920721M2EVK-02
 
@@ -128,6 +132,17 @@ endif # PTS
 
 # Enable Mesh DFU support
 #CY_APP_DEFINES += -DMESH_DFU_SUPPORTED
+
+# Enable Private Proxy support
+#CY_APP_DEFINES += -DPRIVATE_PROXY_SUPPORTED
+
+# Enable Mesh Directed Forwarding support
+#CY_APP_DEFINES += -DDIRECTED_FORWARDING_SERVER_SUPPORTED
+# Enable Mesh Network Filter support - it is needed to simulate big distance between nodes for Directed Forwarding testing
+#CY_APP_DEFINES += -DNETWORK_FILTER_SERVER_SUPPORTED
+
+# Enable Mesh Enhanced Provisioning Authentication
+#CY_APP_DEFINES += -DENHANCED_PROVISIONING_AUTHENTICATION
 
 # These flags control whether the prebuilt mesh libs (core, models)
 # will be the trace enabled versions or not

@@ -44,6 +44,12 @@
 #endif
 #include "wiced_bt_trace.h"
 #include "wiced_bt_mesh_app.h"
+#if ( defined(DIRECTED_FORWARDING_SERVER_SUPPORTED) || defined(NETWORK_FILTER_SERVER_SUPPORTED))
+#include "wiced_bt_mesh_mdf.h"
+#endif
+#ifdef PRIVATE_PROXY_SUPPORTED
+#include "wiced_bt_mesh_private_proxy.h"
+#endif
 
 #ifdef HCI_CONTROL
 #include "wiced_transport.h"
@@ -66,6 +72,16 @@ extern wiced_bt_cfg_settings_t wiced_bt_cfg_settings;
 #define MESH_PID                0x3016
 #define MESH_VID                0x0002
 #define MESH_CACHE_REPLAY_SIZE  0x0008
+
+// Definitions for parameters of the wiced_bt_mesh_directed_forwarding_init():
+#define MESH_DIRECTED_FORWARDING_DIRECTED_PROXY_SUPPORTED   WICED_TRUE  // WICED_TRUE if directed proxy is supported.
+#define MESH_DIRECTED_FORWARDING_DIRECTED_FRIEND_SUPPORTED  WICED_TRUE  // WICED_TRUE if directed friend is supported.
+#define MESH_DIRECTED_FORWARDING_DEFAULT_RSSI_THRESHOLD     -120        // The value of the default_rssi_threshold is implementation specificand should be 10 dB above the receiver sensitivity.
+#define MESH_DIRECTED_FORWARDING_MAX_DT_ENTRIES_CNT         2           // The maximum number of Discovery Table entries supported by the node in a given subnet.It shall be >= 2.
+#define MESH_DIRECTED_FORWARDING_NODE_PATHS                 20          // The minimum number of paths that the node supports when acting as a Path Origin or as a Path Target.It shall be >= 20.
+#define MESH_DIRECTED_FORWARDING_RELAY_PATHS                20          // The minimum number of paths that the node supports when acting as an intermediate Directed Relay node.It shall be >= 20.
+#define MESH_DIRECTED_FORWARDING_PROXY_PATHS                20          // The minimum number of paths that the node supports when acting as a Directed Proxy node. If directed proxy is supported, it shall be >= 20; otherwise it shall be 0.
+#define MESH_DIRECTED_FORWARDING_FRIEND_PATHS               20          // The minimum number of paths that the node supports when acting as a Directed Friend node.
 
 /******************************************************
  *          Structures
@@ -99,6 +115,15 @@ uint8_t mesh_system_id[8]                                                  = { 0
 wiced_bt_mesh_core_config_model_t   mesh_element1_models[] =
 {
     WICED_BT_MESH_DEVICE,
+#ifdef PRIVATE_PROXY_SUPPORTED
+    WICED_BT_MESH_MODEL_PRIVATE_PROXY_SERVER,
+#endif
+#ifdef DIRECTED_FORWARDING_SERVER_SUPPORTED
+    WICED_BT_MESH_DIRECTED_FORWARDING_SERVER,
+#endif
+#ifdef NETWORK_FILTER_SERVER_SUPPORTED
+        WICED_BT_MESH_NETWORK_FILTER_SERVER,
+#endif
 #ifdef REMOTE_PROVISION_SERVER_SUPPORTED
     WICED_BT_MESH_MODEL_REMOTE_PROVISION_SERVER,
 #endif
@@ -301,6 +326,24 @@ void mesh_app_init(wiced_bool_t is_provisioned)
         wiced_bt_mesh_set_raw_scan_response_data(num_elem, adv_elem);
     }
 
+#ifdef DIRECTED_FORWARDING_SERVER_SUPPORTED
+    wiced_bt_mesh_directed_forwarding_init(
+        MESH_DIRECTED_FORWARDING_DIRECTED_PROXY_SUPPORTED,
+        MESH_DIRECTED_FORWARDING_DIRECTED_FRIEND_SUPPORTED,
+        MESH_DIRECTED_FORWARDING_DEFAULT_RSSI_THRESHOLD,
+        MESH_DIRECTED_FORWARDING_MAX_DT_ENTRIES_CNT,
+        MESH_DIRECTED_FORWARDING_NODE_PATHS,
+        MESH_DIRECTED_FORWARDING_RELAY_PATHS,
+        MESH_DIRECTED_FORWARDING_PROXY_PATHS,
+        MESH_DIRECTED_FORWARDING_FRIEND_PATHS);
+
+#endif
+
+#ifdef NETWORK_FILTER_SERVER_SUPPORTED
+    if (is_provisioned)
+        wiced_bt_mesh_network_filter_init();
+#endif
+
     memset (&app_state, 0, sizeof(app_state));
 
 #if REMOTE_PROVISION_SERVER_SUPPORTED
@@ -310,9 +353,7 @@ void mesh_app_init(wiced_bool_t is_provisioned)
     wiced_bt_mesh_model_onoff_server_init(MESH_ONOFF_SERVER_ELEMENT_INDEX, mesh_onoff_server_message_handler, TRANSITION_INTERVAL, is_provisioned);
 
 #ifdef MESH_DFU_SUPPORTED
-    wiced_bt_mesh_model_fw_update_server_init();
     wiced_bt_mesh_model_fw_distribution_server_init();
-    wiced_bt_mesh_model_blob_transfer_server_init(WICED_BT_MESH_FW_TRANSFER_MODE_PUSH);
 #endif
 
 #if NUM_ONOFF_SERVERS > 1
