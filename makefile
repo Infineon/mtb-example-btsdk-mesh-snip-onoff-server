@@ -69,13 +69,16 @@ SUPPORTED_TARGETS = \
   CYW920706WCDEVAL \
   CYBT-353027-EVAL \
   CYBT-343026-EVAL \
+  CYBT-333047-EVAL \
   CYBT-343052-EVAL \
   CYW920735Q60EVB-01 \
   CYW920835M2EVB-01 \
   CYBLE-343072-EVAL-M2B \
   CYBLE-333074-EVAL-M2B \
+  CYBLE-343072-MESH \
   CYW920721M2EVK-01 \
-  CYW920721M2EVK-02
+  CYW920721M2EVK-02 \
+  CYW920721M2EVB-03
 
 #
 # Advanced Configuration
@@ -143,6 +146,9 @@ endif # PTS
 
 # Enable Mesh Enhanced Provisioning Authentication
 #CY_APP_DEFINES += -DENHANCED_PROVISIONING_AUTHENTICATION
+
+# Enable Certificate Based Provisioning
+#CY_APP_DEFINES += -DCERTIFICATE_BASED_PROVISIONING_SUPPORTED
 
 # These flags control whether the prebuilt mesh libs (core, models)
 # will be the trace enabled versions or not
