@@ -1,5 +1,5 @@
 #
-# Copyright 2016-2021, Cypress Semiconductor Corporation (an Infineon company) or
+# Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
 # an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
 #
 # This software, including source code, documentation and related
@@ -64,7 +64,6 @@ SUPPORTED_TARGETS = \
   CYBT-483062-EVAL \
   CYW920820EVB-02 \
   CYBT-213043-EVAL \
-  CYW920721B2EVK-02 \
   CYW920719B2Q40EVB-01 \
   CYW920706WCDEVAL \
   CYBT-353027-EVAL \
@@ -78,7 +77,8 @@ SUPPORTED_TARGETS = \
   CYBLE-343072-MESH \
   CYW920721M2EVK-01 \
   CYW920721M2EVK-02 \
-  CYW920721M2EVB-03
+  CYW920721M2EVB-03 \
+  CYW920820M2EVB-01
 
 #
 # Advanced Configuration
@@ -120,6 +120,12 @@ ifeq ($(REMOTE_PROVISION_SRV),1)
 CY_APP_DEFINES += -DREMOTE_PROVISION_SERVER_SUPPORTED
 endif
 
+# value of the INCLUDE_TIME_AND_SCHEDULER defines if the Time and the Scheduler related models should be included in the device
+INCLUDE_TIME_AND_SCHEDULER ?= 0
+ifeq ($(INCLUDE_TIME_AND_SCHEDULER),1)
+CY_APP_DEFINES += -DTIME_AND_SCHEDULER_SUPPORT
+endif
+
 # value of the LOW_POWER_NODE defines mode. It can be normal node (0), or low power node (1)
 LOW_POWER_NODE ?= 0
 CY_APP_DEFINES += -DLOW_POWER_NODE=$(LOW_POWER_NODE)
@@ -133,8 +139,11 @@ ifeq ($(PTS),1)
 CY_APP_DEFINES += -DPTS
 endif # PTS
 
+# Mesh DFU is not supported on 20706 due to memory limitation
+ifneq ($(TARGET),CYW920706WCDEVAL)
 # Enable Mesh DFU support
 #CY_APP_DEFINES += -DMESH_DFU_SUPPORTED
+endif # !CYW920706WCDEVAL
 
 # Enable Private Proxy support
 #CY_APP_DEFINES += -DPRIVATE_PROXY_SUPPORTED
@@ -146,9 +155,6 @@ endif # PTS
 
 # Enable Mesh Enhanced Provisioning Authentication
 #CY_APP_DEFINES += -DENHANCED_PROVISIONING_AUTHENTICATION
-
-# Enable Certificate Based Provisioning
-#CY_APP_DEFINES += -DCERTIFICATE_BASED_PROVISIONING_SUPPORTED
 
 # These flags control whether the prebuilt mesh libs (core, models)
 # will be the trace enabled versions or not
@@ -183,12 +189,14 @@ CY_20706A2_APP_PATCH_LIBS += wiced_bt_mesh.a
 CY_20719B2_APP_PATCH_LIBS += mesh_optimized_continuous_scan_lib.a
 
 CY_20735B1_APP_PATCH_LIBS += mesh_optimized_continuous_scan_lib.a
+CY_20735B1_APP_PATCH_LIBS += wiced_bt_ble_lib.a
 
 CY_20819A1_APP_PATCH_LIBS += mesh_optimized_continuous_scan_lib.a
 
 CY_20820A1_APP_PATCH_LIBS += mesh_optimized_continuous_scan_lib.a
 
 CY_20835B1_APP_PATCH_LIBS += mesh_optimized_continuous_scan_lib.a
+CY_20835B1_APP_PATCH_LIBS += wiced_bt_ble_lib.a
 
 CY_43012C0_APP_PATCH_LIBS += mesh_optimized_continuous_scan_lib.a
 
