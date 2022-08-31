@@ -71,7 +71,6 @@ extern wiced_bt_cfg_settings_t wiced_bt_cfg_settings;
  ******************************************************/
 #define MESH_PID                0x3016
 #define MESH_VID                0x0002
-#define MESH_CACHE_REPLAY_SIZE  0x0008
 
 // Definitions for parameters of the wiced_bt_mesh_directed_forwarding_init():
 #define MESH_DIRECTED_FORWARDING_DIRECTED_PROXY_SUPPORTED   WICED_TRUE  // WICED_TRUE if directed proxy is supported.
@@ -102,7 +101,7 @@ static void mesh_onoff_server_send_state_change(uint8_t element_idx, uint8_t ono
 static void mesh_onoff_server_process_status(uint8_t element_idx, wiced_bt_mesh_onoff_status_data_t *p_data);
 
 #ifdef HCI_CONTROL
-static void mesh_onoff_hci_event_send_set(uint8_t element_idx, wiced_bt_mesh_onoff_status_data_t *p_data);
+static void mesh_onoff_hci_event_send_status(uint8_t element_idx, wiced_bt_mesh_onoff_status_data_t* p_data);
 #endif
 
 /******************************************************
@@ -231,7 +230,6 @@ wiced_bt_mesh_core_config_t  mesh_config =
     .company_id         = MESH_COMPANY_ID_CYPRESS,                  // Company identifier assigned by the Bluetooth SIG
     .product_id         = MESH_PID,                                 // Vendor-assigned product identifier
     .vendor_id          = MESH_VID,                                 // Vendor-assigned product version identifier
-    .replay_cache_size  = MESH_CACHE_REPLAY_SIZE,                   // Number of replay protection entries, i.e. maximum number of mesh devices that can send application messages to this device.
 #if defined(LOW_POWER_NODE) && (LOW_POWER_NODE == 1)
     .features           = WICED_BT_MESH_CORE_FEATURE_BIT_LOW_POWER, // A bit field indicating the device features. In Low Power mode no Relay, no Proxy and no Friend
     .friend_cfg         =                                           // Empty Configuration of the Friend Feature
@@ -378,9 +376,6 @@ void mesh_onoff_server_message_handler(uint8_t element_idx, uint16_t event, void
         mesh_onoff_server_process_status(element_idx, (wiced_bt_mesh_onoff_status_data_t *)p_data);
         break;
 
-    case WICED_BT_MESH_ONOFF_SET:
-        break;
-
     default:
         WICED_BT_TRACE("unknown\n");
     }
@@ -417,7 +412,7 @@ void mesh_onoff_server_process_status(uint8_t element_idx, wiced_bt_mesh_onoff_s
 {
     WICED_BT_TRACE("onoff srv set onoff: present:%d target:%d remaining:%d\n", p_status->present_onoff, p_status->target_onoff, p_status->remaining_time);
 #if defined HCI_CONTROL
-    mesh_onoff_hci_event_send_set(element_idx, p_status);
+    mesh_onoff_hci_event_send_status(element_idx, p_status);
 #endif
 }
 
@@ -431,9 +426,9 @@ void mesh_onoff_server_send_state_change(uint8_t element_idx, uint8_t onoff)
 
 #ifdef HCI_CONTROL
 /*
- * Send OnOff Set event over transport
+ * Send OnOff Status event over transport
  */
-void mesh_onoff_hci_event_send_set(uint8_t element_idx, wiced_bt_mesh_onoff_status_data_t *p_data)
+void mesh_onoff_hci_event_send_status(uint8_t element_idx, wiced_bt_mesh_onoff_status_data_t *p_data)
 {
     wiced_bt_mesh_hci_event_t *p_hci_event = wiced_bt_mesh_alloc_hci_event(element_idx);
     if (p_hci_event)

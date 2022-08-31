@@ -69,8 +69,6 @@ SUPPORTED_TARGETS = \
   CYBT-353027-EVAL \
   CYBT-343026-EVAL \
   CYBT-333047-EVAL \
-  CYBT-343052-EVAL \
-  CYW920735Q60EVB-01 \
   CYW920835M2EVB-01 \
   CYBLE-343072-EVAL-M2B \
   CYBLE-333074-EVAL-M2B \
@@ -187,9 +185,6 @@ CY_20706A2_APP_PATCH_LIBS += rtc_lib.a
 CY_20706A2_APP_PATCH_LIBS += wiced_bt_mesh.a
 
 CY_20719B2_APP_PATCH_LIBS += mesh_optimized_continuous_scan_lib.a
-
-CY_20735B1_APP_PATCH_LIBS += mesh_optimized_continuous_scan_lib.a
-CY_20735B1_APP_PATCH_LIBS += wiced_bt_ble_lib.a
 
 CY_20819A1_APP_PATCH_LIBS += mesh_optimized_continuous_scan_lib.a
 
