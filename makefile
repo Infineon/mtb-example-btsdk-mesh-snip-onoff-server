@@ -1,5 +1,5 @@
 #
-# Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
+# Copyright 2016-2023, Cypress Semiconductor Corporation (an Infineon company) or
 # an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
 #
 # This software, including source code, documentation and related
@@ -46,10 +46,11 @@ CONFIG=Debug
 VERBOSE=
 
 # default target
-TARGET=CYW920819EVB-02
+TARGET=CYW920819M2EVB-01
 
 SUPPORTED_TARGETS = \
   CYW920819EVB-02 \
+  CYW920819M2EVB-01 \
   CYBT-213043-MESH \
   CYBT-243053-EVAL \
   CYBT-253059-EVAL \
@@ -150,6 +151,12 @@ endif # !CYW920706WCDEVAL
 #CY_APP_DEFINES += -DDIRECTED_FORWARDING_SERVER_SUPPORTED
 # Enable Mesh Network Filter support - it is needed to simulate big distance between nodes for Directed Forwarding testing
 #CY_APP_DEFINES += -DNETWORK_FILTER_SERVER_SUPPORTED
+
+# Enable Large Compositin Data
+#CY_APP_DEFINES += -DLARGE_COMPOSITION_DATA_SUPPORTED
+
+# Enable Opcodes Aggregator support
+#CY_APP_DEFINES += -DOPCODES_AGGREGATOR_SUPPORTED
 
 # Enable Mesh Enhanced Provisioning Authentication
 #CY_APP_DEFINES += -DENHANCED_PROVISIONING_AUTHENTICATION

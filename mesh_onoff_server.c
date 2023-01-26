@@ -1,5 +1,5 @@
 /*
-* Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
+* Copyright 2016-2023, Cypress Semiconductor Corporation (an Infineon company) or
 * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
 *
 * This software, including source code, documentation and related
@@ -47,8 +47,15 @@
 #if ( defined(DIRECTED_FORWARDING_SERVER_SUPPORTED) || defined(NETWORK_FILTER_SERVER_SUPPORTED))
 #include "wiced_bt_mesh_mdf.h"
 #endif
+#ifdef LARGE_COMPOSITION_DATA_SUPPORTED
+#include "wiced_bt_mesh_lcd.h"
+#include "wiced_bt_mesh_dfu.h"
+#endif
 #ifdef PRIVATE_PROXY_SUPPORTED
 #include "wiced_bt_mesh_private_proxy.h"
+#endif
+#ifdef OPCODES_AGGREGATOR_SUPPORTED
+#include "wiced_bt_mesh_agg.h"
 #endif
 
 #ifdef HCI_CONTROL
@@ -114,6 +121,9 @@ uint8_t mesh_system_id[8]                                                  = { 0
 wiced_bt_mesh_core_config_model_t   mesh_element1_models[] =
 {
     WICED_BT_MESH_DEVICE,
+#ifdef LARGE_COMPOSITION_DATA_SUPPORTED
+    WICED_BT_MESH_MODEL_LARGE_COMPOS_DATA_SERVER,
+#endif
 #ifdef PRIVATE_PROXY_SUPPORTED
     WICED_BT_MESH_MODEL_PRIVATE_PROXY_SERVER,
 #endif
@@ -125,6 +135,9 @@ wiced_bt_mesh_core_config_model_t   mesh_element1_models[] =
 #endif
 #ifdef REMOTE_PROVISION_SERVER_SUPPORTED
     WICED_BT_MESH_MODEL_REMOTE_PROVISION_SERVER,
+#endif
+#ifdef OPCODES_AGGREGATOR_SUPPORTED
+    WICED_BT_MESH_MODEL_OPCODES_AGGREGATOR_SERVER,
 #endif
 #ifdef MESH_DFU_SUPPORTED
     WICED_BT_MESH_MODEL_FW_DISTRIBUTOR_UPDATE_SERVER,
@@ -151,6 +164,31 @@ wiced_bt_mesh_core_config_model_t   mesh_element4_models[] =
 {
     WICED_BT_MESH_MODEL_ONOFF_SERVER,
 };
+#endif
+
+#ifdef LARGE_COMPOSITION_DATA_SUPPORTED
+wiced_bt_mesh_core_config_model_t   mesh_element_x_models[] =
+{
+    WICED_BT_MESH_MODEL_LIGHT_HSL_CTL_XYL_SERVER,
+    WICED_BT_MESH_MODEL_FW_DISTRIBUTOR_UPDATE_SERVER,
+};
+
+#define WICED_BT_MESH_LIGHT_XYL_ELEMENT \
+    {                                                                   \
+        .location = MESH_ELEM_LOC_MAIN,                                 \
+        .default_transition_time = MESH_DEFAULT_TRANSITION_TIME_IN_MS,  \
+        .onpowerup_state = WICED_BT_MESH_ON_POWER_UP_STATE_RESTORE,     \
+        .default_level = 1,                                             \
+        .range_min = 1,                                                 \
+        .range_max = 0xffff,                                            \
+        .move_rollover = 0,                                             \
+        .properties_num = 0,                                            \
+        .properties = NULL,                                             \
+        .sensors_num = 0,                                               \
+        .sensors = NULL,                                                \
+        .models_num = (sizeof(mesh_element_x_models) / sizeof(wiced_bt_mesh_core_config_model_t)),  \
+        .models = mesh_element_x_models                                 \
+    }
 #endif
 
 #define MESH_ONOFF_SERVER_ELEMENT_INDEX   0
@@ -222,6 +260,19 @@ wiced_bt_mesh_core_config_element_t mesh_elements[] =
         .models_num = (sizeof(mesh_element4_models) / sizeof(wiced_bt_mesh_core_config_model_t)),                              // Number of models in the array models
         .models = mesh_element4_models,                                 // Array of models located in that element. Model data is defined by structure wiced_bt_mesh_core_config_model_t
     },
+#endif
+#ifdef LARGE_COMPOSITION_DATA_SUPPORTED
+    // Add enough elements to create a large composition data
+    // Note: total element number should not be more than 10
+    WICED_BT_MESH_LIGHT_XYL_ELEMENT,            \
+    WICED_BT_MESH_LIGHT_XYL_ELEMENT,            \
+    WICED_BT_MESH_LIGHT_XYL_ELEMENT,            \
+    WICED_BT_MESH_LIGHT_XYL_ELEMENT,            \
+    WICED_BT_MESH_LIGHT_XYL_ELEMENT,            \
+    WICED_BT_MESH_LIGHT_XYL_ELEMENT,            \
+    WICED_BT_MESH_LIGHT_XYL_ELEMENT,            \
+    WICED_BT_MESH_LIGHT_XYL_ELEMENT,            \
+    WICED_BT_MESH_LIGHT_XYL_ELEMENT,
 #endif
 };
 
